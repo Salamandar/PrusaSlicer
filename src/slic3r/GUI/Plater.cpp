@@ -1970,7 +1970,6 @@ Plater::priv::priv(Plater *q, MainFrame *main_frame)
     });
 	wxGetApp().other_instance_message_handler()->init(this->q);
 
->>>>>>> single slicer instance
 }
 
 Plater::priv::~priv()
