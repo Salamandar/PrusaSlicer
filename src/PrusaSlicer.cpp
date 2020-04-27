@@ -51,13 +51,15 @@
     #include "slic3r/GUI/GUI.hpp"
     #include "slic3r/GUI/GUI_App.hpp"
     #include "slic3r/GUI/3DScene.hpp"
+    #include "slic3r/GUI/InstanceCheck.hpp" 
+    #include "slic3r/GUI/AppConfig.hpp" 
 #endif /* SLIC3R_GUI */
 
 using namespace Slic3r;
 
 int CLI::run(int argc, char **argv)
 {
-	// Switch boost::filesystem to utf8.
+    // Switch boost::filesystem to utf8.
     try {
         boost::nowide::nowide_filesystem();
     } catch (const std::runtime_error& ex) {
@@ -516,6 +518,16 @@ int CLI::run(int argc, char **argv)
 #ifdef SLIC3R_GUI
 // #ifdef USE_WX
         GUI::GUI_App *gui = new GUI::GUI_App();
+
+		bool gui_single_instance_setting = gui->app_config->get("single_instance") == "1";
+		if (Slic3r::instance_check(argc, argv, gui_single_instance_setting)) {
+			//TODO: do we have delete gui and other stuff?
+			return -1;
+		}
+		
+		//gui->app_config = app_config;
+		//app_config = nullptr;
+		
 //		gui->autosave = m_config.opt_string("autosave");
         GUI::GUI_App::SetInstance(gui);
         gui->CallAfter([gui, this, &load_configs] {
